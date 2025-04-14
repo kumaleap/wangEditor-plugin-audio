@@ -1,10 +1,10 @@
 {
   "name": "@wangeditor/plugin-audio",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "description": "wangEditor 上传音频",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wangeditor-team/wangEditor-plugin-upload-attachment.git"
+    "url": "git+https://github.com/kumaleap/wangEditor-plugin-audio.git"
   },
   "keywords": [
     "音频",

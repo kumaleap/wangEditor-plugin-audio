@@ -9,7 +9,7 @@ import EditorAudioSizeMenu from './EditorAudioSizeMenu'
 import { genInsertAudioMenuConfig, genUploadAudioMenuConfig } from './config'
 
 export const insertAudioMenuConf = {
-  key: 'insertAudio',
+  key: 'audio',
   factory() {
     return new InsertAudioMenu()
   },

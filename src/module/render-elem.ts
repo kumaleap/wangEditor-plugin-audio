@@ -2,93 +2,58 @@
  * @description audio render elem
  * @author wulijie
  */
-
-import { Element } from 'slate'
-import { h, VNode } from 'snabbdom'
-import { IDomEditor, DomEditor } from '@wangeditor/editor'
 import { AudioElement } from './custom-types'
-import { genSizeStyledIframeHtml } from '../utils/dom'
-
-function renderAudio(elemNode: Element, children: VNode[] | null, editor: IDomEditor): VNode {
-  const { src = '', poster = '', width = 'auto', height = 'auto' } = elemNode as AudioElement
-
-  // 是否选中
-  const selected = DomEditor.isNodeSelected(editor, elemNode)
-
-  let vnode: VNode
-  if (src.trim().indexOf('<iframe ') === 0) {
-    // 增加尺寸样式
-    const iframeHtml = genSizeStyledIframeHtml(src, width, height)
-
-    // iframe 形式，第三方音频
-    vnode = h('div', {
-      class: {
-        'w-e-textarea-audio-container': true
-      },
-      attrs: {
-        'data-selected': selected ? 'true' : '' // 标记为 选中
-      },
-      props: {
-        innerHTML: iframeHtml // 内嵌第三方 iframe 音频
-      }
-    })
-  } else {
-    // 其他，mp3 格式
-    const audioProps: any = {
-      attrs: {
-        controls: true,
-        poster: poster
-      }
-    }
-    
-    // 添加尺寸
-    if (width !== 'auto') audioProps.attrs.width = width
-    if (height !== 'auto') audioProps.attrs.height = height
-
-    const audioVnode = h('audio', 
-      audioProps,
-      [
-        h('source', {
-          attrs: {
-            src: src,
-            type: 'audio/mp3'
-          }
-        }),
-        `Sorry, your browser doesn't support embedded audios.\n 抱歉，浏览器不支持 audio 音频`
-      ]
+import {DomEditor, IDomEditor, SlateElement} from "@wangeditor/editor";
+import {h, VNode} from "snabbdom";
+ 
+function renderAudioElement(elemNode: SlateElement,children:VNode[] | null, editor: IDomEditor):VNode{
+    const {src='',width='300',height='54'} = elemNode as AudioElement;
+    const selected = DomEditor.isNodeSelected(editor, elemNode);
+ 
+ 
+    const audioVnode = h(
+        'audio', // html标签
+        {
+            props: {
+                src: src,
+                contentEditable: false,
+                controls: true,
+            },
+            style:{
+                width: width + 'px',
+                height: height + 'px',
+                'max-width':'100%' // 这里之所以要写死，是为了实现宽度自适应的。如果直接设置width：100%，会触发报错。所以想要实现width：100%效果，需要先设置max-width，然后在给width设置一个离谱的值，比如说100000.
+            }
+        }
     )
-
-    vnode = h('div', {
-      class: {
-        'w-e-textarea-audio-container': true
-      },
-      attrs: {
-        'data-selected': selected ? 'true' : '' // 标记为 选中
-      }
-    }, [audioVnode])
-  }
-
-  // 【注意】void node 中，renderElem 不用处理 children 。core 会统一处理。
-
-  const containerVnode = h(
-    'div',
-    {
-      props: {
-        contentEditable: false,
-      },
-      on: {
-        mousedown: e => e.preventDefault(),
-      },
-    },
-    vnode
-  )
-
-  return containerVnode
+    const vnode = h(
+        'div',
+        {
+            props: {
+                "className": 'w-e-textarea-video-container', // 这里直接复用video的效果
+                "data-selected": (selected?'true':'')
+            },
+        },
+        audioVnode
+    )
+    const containerVnode = h(
+        'div',
+        {
+            props: {
+                contentEditable: false,
+            },
+            on: {
+                mousedown: e => e.preventDefault(),
+            },
+        },
+        vnode
+    )
+ 
+    return containerVnode
 }
-
 const renderAudioConf = {
-  type: 'audio', // 和 elemNode.type 一致
-  renderElem: renderAudio,
+    type: 'audio', // 新元素 type ，重要！！！即custom-type中定义的type
+    renderElem: renderAudioElement,
 }
-
-export { renderAudioConf }
+ 
+export {renderAudioConf}

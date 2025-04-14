@@ -44,7 +44,6 @@ export default async function (editor: IDomEditor, src: string, poster = '') {
   const audio: AudioElement = {
     type: 'audio',
     src: parsedSrc,
-    poster,
     children: [{ text: '' }], // 【注意】void node 需要一个空 text 作为 children
   }
 
